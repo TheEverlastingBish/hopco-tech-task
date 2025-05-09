@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: hopco_ops
+    description: Internal Postgres transactional tables
+    database: hopco
+    loader: internal
+    schema: public
+    tables:
+      - name: base_app_result
+      - name: date_time_app_result
+      - name: integer_app_result
+      - name: range_app_result
