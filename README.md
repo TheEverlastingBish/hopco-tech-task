@@ -1,1 +1,1 @@
-# hopco-tech-task
+# HOPCo Tech Task
