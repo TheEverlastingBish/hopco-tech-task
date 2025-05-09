@@ -1,14 +1,11 @@
 hopco:
-  target: prod
+  target: dev
   outputs:
     dev:
       type: snowflake
-      account: VR02787
-
-      # User/password auth
+      account: CZIYSBG-VR02787
       user: WRANGLER
-      password: fn9caNpb672X9&ZR
-
+      password: "{{ env_var('SNOWFLAKE_WRANGLER_PASSWORD') }}"
       role: WH_USER
       database: HOPCO
       warehouse: COMPUTE_WH
@@ -16,8 +13,6 @@ hopco:
       threads: 5
       client_session_keep_alive: False
       query_tag: dbt
-
-      # optional
       connect_retries: 0 # default 0
       connect_timeout: 10 # default: 10
       retry_on_database_errors: False # default: false
