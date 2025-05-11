@@ -1,18 +1,26 @@
 version: 2
 
 models:
-  - name: int__app_results_history
+  - name: int__app_results
     description: "Intermediate table for app results history with all polymorphic types joined up."
+
     config:
       materialized: table
       contract:
         enforced: true
+
     constraints:
       - type: primary_key
-        columns: [ hash_id ]
+        columns: [ record_id ]
         warn_unenforced: false
+
     columns:
-      - name: id
+      - name: record_id
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: result_ptr_id
         data_type: string
         description: "Patient ID"
         data_tests:
@@ -51,12 +59,8 @@ models:
         description: "The timestamp of when the ETL process started"
         data_tests:
           - not_null
-      - name: hash_id
+      - name: table_pk
         data_type: string
-        description: "A hash ID for the record"
+        description: "Primary key fo the history table, brought in for lookup and reference"
         data_tests:
           - not_null
-          - unique
-    tests:
-      - dbt_utils.expression_is_true:
-          expression: "modified_time >= DATEADD('hour', -24, etl_run_started_ts)"

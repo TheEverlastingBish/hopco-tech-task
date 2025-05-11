@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: date_time_app_results
+    description: "Patient results from the app for the datetime polymorphic types"
+    columns:
+      - name: record_id
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+      - name: result_ptr_id
+        data_type: string
+        description: "Patient ID"
+        data_tests:
+          - not_null
+      - name: polymorphic_type
+        data_type: string
+        description: "The polymorphic type of the result"
+        data_tests:
+          - accepted_values:
+              values: [ 'DateTimeAppResult' ]
+              severity: error
+      - name: created_time
+        data_type: datetime
+        data_tests:
+          - not_null
+      - name: modified_time
+        data_type: datetime
+        data_tests:
+          - not_null
+      - name: content_slug
+        data_type: string
+      - name: datetime_value
+        data_type: datetime
+        description: "The datetime value of the app result"
+      - name: etl_run_started_ts
+        data_type: timestamp
+        description: "The timestamp of when the ETL process started"
+        data_tests:
+          - not_null
+      - name: table_pk
+        data_type: string
+        description: "Primary key fo the history table, brought in for lookup and reference"
+        data_tests:
+          - not_null

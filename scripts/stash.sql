@@ -86,7 +86,7 @@ SELECT
     TIMESTAMP(
         '{{ run_started_at.strftime("%Y-%m-%d %H:%M:%S.%f UTC") }}'
     ) AS etl_run_started_ts,
-    HASH(concat(*)) AS hash_id  -- PK
+    HASH(concat(*)) AS table_pk  -- PK
 FROM 
     HOPCO.PUBLIC_STAGING.STG__BASE_APP_RESULTS AS br
 LEFT JOIN
@@ -122,3 +122,28 @@ PIVOT(
     MAX() FOR quarter IN (ANY ORDER BY quarter))
   ORDER BY empid;
 
+
+
+
+MERGE INTO hopco.app_result AS br
+USING app_result AS src
+    ON br.id = src.id
+    AND br.polymorphic_type = src.polymorphic_type
+    AND src.modified_time >= CURRENT_TIMESTAMP() - interval '24 hours'
+WHEN NOT MATCHED BY TARGET THEN
+INSERT VALUES
+    (
+        id,
+        polymorphic_type,
+        created_time,
+        modified_time,
+        content_slug,
+    )
+WHEN MATCHED
+    AND src.modified_time > br.modified_time
+UPDATE
+    SET
+        br.modified_time = src.modified_time,
+        br.content_slug = src.content_slug,
+-- WHEN NOT MATCHED BY SOURCE
+-- THEN DELETE;
