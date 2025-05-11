@@ -12,7 +12,11 @@ SELECT
     datetime_value,
     integer_value,
     range_start,
-    range_end
+    range_end,
+    TIMESTAMP(
+        '{{ run_started_at.strftime("%Y-%m-%d %H:%M:%S.%f UTC") }}'
+    ) AS etl_run_started_ts,
+    HASH(concat(*)) AS hash_id  -- PK
 FROM
     {{ ref('stg__base_app_results') }} AS br
 LEFT JOIN

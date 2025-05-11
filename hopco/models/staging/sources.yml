@@ -2,12 +2,23 @@ version: 2
 
 sources:
   - name: hopco_ops
-    description: Internal Postgres transactional tables
+    description: "Internal Postgres transactional tables synced from replica."
     database: hopco
-    loader: internal
+    loader: Fivetran
     schema: public
     tables:
       - name: base_app_result
+        columns:
+          - name: id
+            data_type: string
+          - name: polymorphic_type
+            data_type: string
+          - name: created_time
+            data_type: datetime
+          - name: modified_time
+            data_type: datetime
+          - name: content_slug
+            data_type: string
       - name: date_time_app_result
       - name: integer_app_result
       - name: range_app_result
