@@ -4,13 +4,14 @@ models:
   - name: date_time_app_results_l24hrs
     description: "Patient results from the app for the datetime polymorphic types in the last 24 hours."
     columns:
-      - name: result_ptr_id
-        description: "The primary key for this table"
+      - name: hash_id
+        description: "A hash ID for the record"
         data_tests:
-          - unique
           - not_null
-      - name: datetime_value
-        description: "The datetime value of the app result"
+          - unique
+      - name: result_ptr_id
+        data_tests:
+          - not_null
       - name: polymorphic_type
         description: "The polymorphic type of the result"
         data_tests:
@@ -24,8 +25,9 @@ models:
         data_tests:
           - not_null
       - name: content_slug
+      - name: datetime_value
+        description: "The datetime value of the app result"
       - name: etl_run_started_ts
-      - name: hash_id
     tests:
       - dbt_utils.expression_is_true:
           expression: "modified_time >= DATEADD('hour', -24, etl_run_started_ts)"

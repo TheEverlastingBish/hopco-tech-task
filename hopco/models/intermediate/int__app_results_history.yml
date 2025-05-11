@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: int__app_results_history
+    description: "Intermediate table for app results history with all polymorphic types joined up."
+    config:
+      materialized: table
+      contract:
+        enforced: true
+    constraints:
+      - type: primary_key
+        columns: [ hash_id ]
+        warn_unenforced: false
+    columns:
+      - name: id
+        data_type: string
+        description: "Patient ID"
+        data_tests:
+          - not_null
+      - name: polymorphic_type
+        data_type: string
+        description: "The polymorphic type of the result"
+        data_tests:
+          - accepted_values:
+              values: [ 'DateTimeAppResult', 'IntegerAppResult', 'RangeAppResult' ]
+              severity: error
+      - name: created_time
+        data_type: datetime
+        data_tests:
+          - not_null
+      - name: modified_time
+        data_type: datetime
+        data_tests:
+          - not_null
+      - name: content_slug
+        data_type: string
+      - name: datetime_value
+        data_type: datetime
+        description: "The datetime value of the app result"
+      - name: integer_value
+        data_type: integer
+        description: "The integer value of the app result"
+      - name: range_start
+        data_type: datetime
+        description: "The start of the range for the app result"
+      - name: range_end
+        data_type: datetime
+        description: "The end of the range for the app result"
+      - name: etl_run_started_ts
+        data_type: timestamp
+        description: "The timestamp of when the ETL process started"
+        data_tests:
+          - not_null
+      - name: hash_id
+        data_type: string
+        description: "A hash ID for the record"
+        data_tests:
+          - not_null
+          - unique
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "modified_time >= DATEADD('hour', -24, etl_run_started_ts)"
