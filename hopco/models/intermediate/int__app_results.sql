@@ -1,13 +1,6 @@
 {{
     config(
         tags=['app', 'patient', 'result'],
-        materialized='incremental',
-        incremental_strategy='insert_overwrite',
-        unique_key='record_id',
-        on_schema_change="append_new_columns",
-        incremental_predicates=[
-            "DBT_INTERNAL_DEST.modified_time >= DATEADD(hour, -24, CURRENT_TIMESTAMP())"
-        ],
         cluster_by=['POLYMORPHIC_TYPE']
     )
 }}
@@ -25,5 +18,5 @@ WITH final AS (
 )
 
 SELECT * 
-FROM 
+FROM
     final
