@@ -15,10 +15,10 @@ WITH final AS (
         content_slug,
         datetime_value,
     FROM
-        {{ ref('int__app_results_history') }} AS br
+        {{ ref('int__app_results_history') }}
     WHERE
         modified_time >= DATEADD(hour, -24, CURRENT_TIMESTAMP())
-        AND br.polymorphic_type = 'DateTimeAppResult'
+        AND polymorphic_type = 'DateTimeAppResult'
     QUALIFY
         ROW_NUMBER() OVER (
             PARTITION BY id
