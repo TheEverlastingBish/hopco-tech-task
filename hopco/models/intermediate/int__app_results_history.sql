@@ -1,7 +1,9 @@
 {{
     config(
         tags=['app', 'patient', 'result'],
+        unique_key='hash_id',
         materialized='incremental',
+        on_schema_change='append_new_columns',
         cluster_by=['POLYMORPHIC_TYPE']
     )
 }}
@@ -13,10 +15,16 @@ SELECT
     integer_value,
     range_start,
     range_end,
-    TIMESTAMP(
-        '{{ run_started_at.strftime("%Y-%m-%d %H:%M:%S.%f UTC") }}'
+
+    TO_TIMESTAMP(
+        '{{ run_started_at.strftime("%Y-%m-%d %H:%M:%S.%f") }}'
     ) AS etl_run_started_ts,
-    HASH(concat(*)) AS hash_id  -- PK
+
+    {{ dbt_utils.generate_surrogate_key([
+        'br.id', 'br.polymorphic_type', 'br.content_slug', 'br.modified_time', 
+        'datetime_value', 'integer_value', 'range_start', 'range_end'
+    ]) }} AS hash_id  -- PK
+
 FROM
     {{ ref('stg__base_app_results') }} AS br
 LEFT JOIN
